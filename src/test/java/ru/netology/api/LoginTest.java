@@ -16,7 +16,6 @@ public class LoginTest {
         Configuration.baseUrl = "http://localhost:9999";
         Configuration.headless = true;
         open("/");
-        // Ждем появления формы. Если она есть, страница загрузилась.
         $("[data-test-id='login'] input").shouldBe(visible);
     }
 
@@ -27,11 +26,10 @@ public class LoginTest {
 
         $("[data-test-id='login'] input").setValue(user.getLogin());
         $("[data-test-id='password'] input").setValue(user.getPassword());
-        
-        // ИСПРАВЛЕНО: используем стандартный класс кнопки .button
         $(".button").click();
 
-        $(".dashboard").shouldBe(visible);
+        // ИСПРАВЛЕНО: ищем dashboard по data-test-id, как принято в Netology
+        $("[data-test-id='dashboard']").shouldBe(visible);
     }
 
     @Test
