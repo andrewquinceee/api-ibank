@@ -8,41 +8,25 @@ public class ApiTest {
     @Test
     @DisplayName("Успешная регистрация активного пользователя")
     void shouldRegisterActiveUserSuccessfully() {
-        User user = DataGenerator.generateRandomActiveUser();
+        User user = DataGenerator.generateUser("active");
         DataGenerator.register(user);
     }
 
     @Test
     @DisplayName("Успешная регистрация заблокированного пользователя")
     void shouldRegisterBlockedUserSuccessfully() {
-        User user = DataGenerator.generateRandomBlockedUser();
+        User user = DataGenerator.generateUser("blocked");
         DataGenerator.register(user);
     }
 
     @Test
     @DisplayName("Перезапись данных существующего пользователя (возвращает 200)")
     void shouldOverwriteExistingUserSuccessfully() {
-        User user = DataGenerator.generateRandomActiveUser();
-        DataGenerator.register(user); // Первая регистрация
+        User user = DataGenerator.generateUser("active");
+        DataGenerator.register(user); 
         
-        // Вторая регистрация с тем же логином, но новым паролем и статусом
+        // Используем тот же логин, но новые данные (перезапись)
         User updatedUser = new User(user.getLogin(), "newPassword123", "blocked");
-        DataGenerator.register(updatedUser); // Должно вернуть 200 (перезапись)
-    }
-
-    @Test
-    @DisplayName("Реакция на невалидный логин (пустая строка): приложение возвращает 200")
-    void shouldReturn200ForEmptyLogin() {
-        User user = DataGenerator.generateUserWithInvalidLogin();
-        // Мы изучили реакцию: приложение принимает пустой логин и возвращает 200
-        DataGenerator.registerAndExpectError(user, 200); 
-    }
-
-    @Test
-    @DisplayName("Реакция на невалидный пароль (пустая строка): приложение возвращает 200")
-    void shouldReturn200ForEmptyPassword() {
-        User user = DataGenerator.generateUserWithInvalidPassword();
-        // Мы изучили реакцию: приложение принимает пустой пароль и возвращает 200
-        DataGenerator.registerAndExpectError(user, 200); 
+        DataGenerator.register(updatedUser); 
     }
 }

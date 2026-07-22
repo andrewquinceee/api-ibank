@@ -1,67 +1,67 @@
 package ru.netology.api;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.open;
 
 public class LoginTest {
 
     @BeforeEach
     void setup() {
         Configuration.baseUrl = "http://localhost:9999";
-        open("/login");
+        open("/");
     }
 
     @Test
     void shouldLoginWithActiveUser() {
-        User activeUser = DataGenerator.generateUser("active");
-        DataGenerator.register(activeUser);
-        
-        $("[data-test-id='login']").setValue(activeUser.getLogin());
-        $("[data-test-id='password']").setValue(activeUser.getPassword());
-        $("[data-test-id='login-button']").click();
-        
+        User user = DataGenerator.generateUser("active");
+        DataGenerator.register(user);
+
+        $("[data-test-id='login'] input").setValue(user.getLogin());
+        $("[data-test-id='password'] input").setValue(user.getPassword());
+        $("[data-test-id='action']").click();
+
         $("[data-test-id='dashboard']").shouldBe(visible);
     }
 
     @Test
     void shouldNotLoginWithBlockedUser() {
-        User blockedUser = DataGenerator.generateUser("blocked");
-        DataGenerator.register(blockedUser);
-        
-        $("[data-test-id='login']").setValue(blockedUser.getLogin());
-        $("[data-test-id='password']").setValue(blockedUser.getPassword());
-        $("[data-test-id='login-button']").click();
-        
-        $("[data-test-id='error-message']").shouldHave(visible);
+        User user = DataGenerator.generateUser("blocked");
+        DataGenerator.register(user);
+
+        $("[data-test-id='login'] input").setValue(user.getLogin());
+        $("[data-test-id='password'] input").setValue(user.getPassword());
+        $("[data-test-id='action']").click();
+
+        $(".notification").shouldBe(visible).shouldHave(text("Ошибка"));
     }
 
     @Test
-    void shouldNotLoginWithInvalidCredentials() {
-        User validUser = DataGenerator.generateUser("active");
-        DataGenerator.register(validUser);
-        
-        // Неправильный логин
-        $("[data-test-id='login']").setValue("invalid_" + validUser.getLogin());
-        $("[data-test-id='password']").setValue(validUser.getPassword());
-        $("[data-test-id='login-button']").click();
-        
-        $("[data-test-id='error-message']").shouldHave(visible);
+    void shouldNotLoginWithInvalidLogin() {
+        User user = DataGenerator.generateUser("active");
+        DataGenerator.register(user);
+
+        $("[data-test-id='login'] input").setValue("invalid_" + user.getLogin());
+        $("[data-test-id='password'] input").setValue(user.getPassword());
+        $("[data-test-id='action']").click();
+
+        $(".notification").shouldBe(visible).shouldHave(text("Ошибка"));
     }
 
     @Test
     void shouldNotLoginWithInvalidPassword() {
-        User validUser = DataGenerator.generateUser("active");
-        DataGenerator.register(validUser);
-        
-        $("[data-test-id='login']").setValue(validUser.getLogin());
-        $("[data-test-id='password']").setValue("wrong_password");
-        $("[data-test-id='login-button']").click();
-        
-        $("[data-test-id='error-message']").shouldHave(visible);
+        User user = DataGenerator.generateUser("active");
+        DataGenerator.register(user);
+
+        $("[data-test-id='login'] input").setValue(user.getLogin());
+        $("[data-test-id='password'] input").setValue("wrong_password");
+        $("[data-test-id='action']").click();
+
+        $(".notification").shouldBe(visible).shouldHave(text("Ошибка"));
     }
 }
