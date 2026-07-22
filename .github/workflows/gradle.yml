@@ -19,8 +19,8 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
-    - name: Start SUT
+    - name: Start SUT in TEST mode
       run: java -jar ./artifacts/app-ibank.jar -P:profile=test &
 
     - name: Run Tests
-      run: ./gradlew test -Dselenide.headless=true --info
+      run: ./gradlew test --info
