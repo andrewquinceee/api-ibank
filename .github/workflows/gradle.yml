@@ -22,5 +22,8 @@ jobs:
     - name: Start SUT in TEST mode
       run: java -jar ./artifacts/app-ibank.jar -P:profile=test &
 
+    - name: Wait for SUT to be ready
+      run: sleep 10
+
     - name: Run Tests
       run: ./gradlew test --info
