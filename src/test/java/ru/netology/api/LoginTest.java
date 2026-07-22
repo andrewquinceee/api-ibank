@@ -14,8 +14,9 @@ public class LoginTest {
     @BeforeEach
     void setup() {
         Configuration.baseUrl = "http://localhost:9999";
+        Configuration.headless = true;
         open("/");
-        // Если форма загрузилась, значит приложение готово
+        // Ждем появления формы. Если она есть, страница загрузилась.
         $("[data-test-id='login'] input").shouldBe(visible);
     }
 
@@ -30,7 +31,6 @@ public class LoginTest {
         // ИСПРАВЛЕНО: используем стандартный класс кнопки .button
         $(".button").click();
 
-        // Проверка успешного входа
         $(".dashboard").shouldBe(visible);
     }
 
@@ -43,7 +43,6 @@ public class LoginTest {
         $("[data-test-id='password'] input").setValue(user.getPassword());
         $(".button").click();
 
-        // Проверка появления ошибки
         $(".notification").shouldBe(visible).shouldHave(text("Ошибка"));
     }
 
