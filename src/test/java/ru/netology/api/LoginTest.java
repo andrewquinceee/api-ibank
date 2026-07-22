@@ -15,7 +15,7 @@ public class LoginTest {
     void setup() {
         Configuration.baseUrl = "http://localhost:9999";
         open("/");
-        // Ждем появления формы, чтобы убедиться, что страница загрузилась
+        // Если форма загрузилась, значит приложение готово
         $("[data-test-id='login'] input").shouldBe(visible);
     }
 
@@ -24,10 +24,13 @@ public class LoginTest {
         User user = DataGenerator.generateUser("active");
         DataGenerator.register(user);
 
-        $("[data-test-id='login'] input").shouldBe(visible).setValue(user.getLogin());
-        $("[data-test-id='password'] input").shouldBe(visible).setValue(user.getPassword());
-        $("[data-test-id='action']").shouldBe(visible).click();
+        $("[data-test-id='login'] input").setValue(user.getLogin());
+        $("[data-test-id='password'] input").setValue(user.getPassword());
+        
+        // ИСПРАВЛЕНО: используем стандартный класс кнопки .button
+        $(".button").click();
 
+        // Проверка успешного входа
         $(".dashboard").shouldBe(visible);
     }
 
@@ -36,10 +39,11 @@ public class LoginTest {
         User user = DataGenerator.generateUser("blocked");
         DataGenerator.register(user);
 
-        $("[data-test-id='login'] input").shouldBe(visible).setValue(user.getLogin());
-        $("[data-test-id='password'] input").shouldBe(visible).setValue(user.getPassword());
-        $("[data-test-id='action']").shouldBe(visible).click();
+        $("[data-test-id='login'] input").setValue(user.getLogin());
+        $("[data-test-id='password'] input").setValue(user.getPassword());
+        $(".button").click();
 
+        // Проверка появления ошибки
         $(".notification").shouldBe(visible).shouldHave(text("Ошибка"));
     }
 
@@ -48,9 +52,9 @@ public class LoginTest {
         User user = DataGenerator.generateUser("active");
         DataGenerator.register(user);
 
-        $("[data-test-id='login'] input").shouldBe(visible).setValue("invalid_" + user.getLogin());
-        $("[data-test-id='password'] input").shouldBe(visible).setValue(user.getPassword());
-        $("[data-test-id='action']").shouldBe(visible).click();
+        $("[data-test-id='login'] input").setValue("invalid_" + user.getLogin());
+        $("[data-test-id='password'] input").setValue(user.getPassword());
+        $(".button").click();
 
         $(".notification").shouldBe(visible).shouldHave(text("Ошибка"));
     }
@@ -60,9 +64,9 @@ public class LoginTest {
         User user = DataGenerator.generateUser("active");
         DataGenerator.register(user);
 
-        $("[data-test-id='login'] input").shouldBe(visible).setValue(user.getLogin());
-        $("[data-test-id='password'] input").shouldBe(visible).setValue("wrong_password");
-        $("[data-test-id='action']").shouldBe(visible).click();
+        $("[data-test-id='login'] input").setValue(user.getLogin());
+        $("[data-test-id='password'] input").setValue("wrong_password");
+        $(".button").click();
 
         $(".notification").shouldBe(visible).shouldHave(text("Ошибка"));
     }
