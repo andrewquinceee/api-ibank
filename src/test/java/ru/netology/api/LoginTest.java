@@ -15,6 +15,8 @@ public class LoginTest {
     void setup() {
         Configuration.baseUrl = "http://localhost:9999";
         open("/");
+        // Явное ожидание загрузки формы логина. Это предотвращает ошибку "Element not found" в CI
+        $("[data-test-id='login'] input").shouldBe(visible);
     }
 
     @Test
@@ -26,7 +28,8 @@ public class LoginTest {
         $("[data-test-id='password'] input").setValue(user.getPassword());
         $("[data-test-id='action']").click();
 
-        $("[data-test-id='dashboard']").shouldBe(visible);
+        // Проверка успешного входа (появление дашборда)
+        $(".dashboard").shouldBe(visible);
     }
 
     @Test
@@ -38,6 +41,7 @@ public class LoginTest {
         $("[data-test-id='password'] input").setValue(user.getPassword());
         $("[data-test-id='action']").click();
 
+        // Проверка появления ошибки
         $(".notification").shouldBe(visible).shouldHave(text("Ошибка"));
     }
 
