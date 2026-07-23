@@ -19,13 +19,16 @@ public class DataGenerator {
             .setContentType(JSON)
             .build();
 
-    // Один гибкий метод вместо двух
+    public static String generateRandomLogin() {
+        return "user" + faker.number().digits(5);
+    }
+
+    public static String generateRandomPassword() {
+        return faker.internet().password();
+    }
+
     public static User generateUser(String status) {
-        return new User(
-                "user" + faker.number().digits(5),
-                faker.internet().password(),
-                status
-        );
+        return new User(generateRandomLogin(), generateRandomPassword(), status);
     }
 
     public static void register(User user) {

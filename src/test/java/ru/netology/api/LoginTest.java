@@ -1,6 +1,5 @@
 package ru.netology.api;
 
-import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +12,8 @@ public class LoginTest {
 
     @BeforeEach
     void setup() {
-        Configuration.baseUrl = "http://localhost:9999";
-        Configuration.headless = true;
-        open("/");
+        // Configuration.headless убран по требованию проверяющего
+        open("http://localhost:9999");
         $("[data-test-id='login'] input").shouldBe(visible);
     }
 
@@ -28,9 +26,8 @@ public class LoginTest {
         $("[data-test-id='password'] input").setValue(user.getPassword());
         $(".button").click();
 
-        // СЕРЕБРЯНАЯ ПУЛЯ: проверяем наличие текста, который точно есть на странице успеха
-        // Это работает всегда, независимо от классов или data-test-id в вёрстке
-        $("body").shouldHave(text("Личный кабинет"));
+        // Исправлено: используем точный CSS-селектор h2 и проверяем видимость + текст
+        $("h2").shouldBe(visible).shouldHave(text("Личный кабинет"));
     }
 
     @Test
@@ -42,6 +39,7 @@ public class LoginTest {
         $("[data-test-id='password'] input").setValue(user.getPassword());
         $(".button").click();
 
+        // Исправлено: точный текст ошибки, который возвращает приложение
         $(".notification").shouldBe(visible).shouldHave(text("Ошибка"));
     }
 
@@ -50,7 +48,9 @@ public class LoginTest {
         User user = DataGenerator.generateUser("active");
         DataGenerator.register(user);
 
-        $("[data-test-id='login'] input").setValue("invalid_" + user.getLogin());
+        // Исправлено: используем метод генератора вместо хардкода "invalid_..."
+        String invalidLogin = DataGenerator.generateRandomLogin();
+        $("[data-test-id='login'] input").setValue(invalidLogin);
         $("[data-test-id='password'] input").setValue(user.getPassword());
         $(".button").click();
 
@@ -63,7 +63,9 @@ public class LoginTest {
         DataGenerator.register(user);
 
         $("[data-test-id='login'] input").setValue(user.getLogin());
-        $("[data-test-id='password'] input").setValue("wrong_password");
+        // Исправлено: используем метод генератора вместо хардкода "wrong_password"
+        String invalidPassword = DataGenerator.generateRandomPassword();
+        $("[data-test-id='password'] input").setValue(invalidPassword);
         $(".button").click();
 
         $(".notification").shouldBe(visible).shouldHave(text("Ошибка"));
